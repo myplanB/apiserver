@@ -30,6 +30,8 @@ import (
 	"k8s.io/client-go/pkg/api/v1"
 
 	"github.com/gorilla/mux"
+
+	"apiserver/pkg/storage/mysqld"
 )
 
 func Register(rout *mux.Router) {
@@ -40,10 +42,28 @@ func Register(rout *mux.Router) {
 	r.RegisterHttpHandler(rout, "/apps/scale", "PATCH", ScaleApplication)
 	r.RegisterHttpHandler(rout, "/apps/expansion", "PUT", ExpansionApplication)
 	r.RegisterHttpHandler(rout, "/apps/rollupdate", "POST", RollingUpdateApplication)
-	// r.RegisterHttpHandler(rout, "/apps/redeploy", "POST", RollingApplication)
+	r.RegisterHttpHandler(rout, "/apps", "GET", QueryApplication)
 }
 
-//CreateApplication create the application
+/**
+	QueryApplication  query record from mysql
+ */
+func QueryApplication(request *http.Request) (string, interface{}) {
+	var app_name string = request.FormValue("app_name")
+	app := &application.App{}
+	engine := mysqld.GetEngine()
+	_,err := engine.Id(app_name).Get(app)
+	if err != nil{
+		log.Errorf("is not exist app err:%v",err)
+		return r.StatusBadRequest,"is not exist application"
+	}
+	log.Info("app:",app)
+	return r.StatusOK,app
+}
+
+/**
+	CreateApplication create the application
+ */
 func CreateApplication(request *http.Request) (string, interface{}) {
 	//get the request's body ,then marsh to app struct
 	decoder := json.NewDecoder(request.Body)
@@ -92,7 +112,9 @@ func CreateApplication(request *http.Request) (string, interface{}) {
 	return r.StatusCreated, "create app successed"
 }
 
-//DeleteApplication delete the application
+/**
+	DeleteApplication delete the application
+ */
 func DeleteApplication(request *http.Request) (string, interface{}) {
 	appName := request.FormValue("app_name")
 	namespace := request.FormValue("ns")
@@ -117,7 +139,9 @@ func DeleteApplication(request *http.Request) (string, interface{}) {
 	return r.StatusNoContent, "delete app successed"
 }
 
-//StopApplication stop the application
+/**
+	StopApplication stop the application
+ */
 func StopApplication(request *http.Request) (string, interface{}) {
 	appName := request.FormValue("app_name")
 	namespace := request.FormValue("ns")
@@ -136,7 +160,9 @@ func StopApplication(request *http.Request) (string, interface{}) {
 	return r.StatusOK, "stop application named " + appName + " successed"
 }
 
-//StartApplication start the application
+/**
+	StartApplication start the application
+ */
 func StartApplication(request *http.Request) (string, interface{}) {
 	appName := request.FormValue("app_name")
 	namespace := request.FormValue("ns")
@@ -161,7 +187,9 @@ func StartApplication(request *http.Request) (string, interface{}) {
 	return r.StatusOK, "start application named " + appName + " successed"
 }
 
-//ScaleApplication scale the application
+/**
+	ScaleApplication scale the application
+ */
 func ScaleApplication(request *http.Request) (string, interface{}) {
 	appName := request.FormValue("app_name")
 	app_cnt := request.FormValue("app_cnt")
@@ -182,7 +210,9 @@ func ScaleApplication(request *http.Request) (string, interface{}) {
 	return r.StatusCreated, "scale application named " + appName + ` successed`
 }
 
-//RollingUpdateApplication rolling update the application
+/**
+	RollingUpdateApplication rolling update the application
+ */
 func RollingUpdateApplication(request *http.Request) (string, interface{}) {
 	appName := request.FormValue("app_name")
 	namespace := request.FormValue("ns")
@@ -203,7 +233,9 @@ func RollingUpdateApplication(request *http.Request) (string, interface{}) {
 	return r.StatusCreated, "rolling update application named " + appName + ` successed`
 }
 
-//ReDeployApplication redeploy application
+/**
+	ReDeployApplication redeploy application
+ */
 func ReDeployApplication(request *http.Request) (string, interface{}) {
 	appName := request.FormValue("app_name")
 	namespace := request.FormValue("ns")
@@ -220,7 +252,9 @@ func ReDeployApplication(request *http.Request) (string, interface{}) {
 	return r.StatusCreated, "redeploy application named " + appName + " successed"
 }
 
-//ExpansionApplication expansion the application
+/**
+	ExpansionApplication expansion the application
+ */
 func ExpansionApplication(request *http.Request) (string, interface{}) {
 	appName := request.FormValue("app_name")
 	namespace := request.FormValue("ns")
