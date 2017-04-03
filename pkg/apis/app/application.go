@@ -30,8 +30,6 @@ import (
 	"k8s.io/client-go/pkg/api/v1"
 
 	"github.com/gorilla/mux"
-
-	"apiserver/pkg/storage/mysqld"
 )
 
 func Register(rout *mux.Router) {
@@ -49,16 +47,29 @@ func Register(rout *mux.Router) {
 	QueryApplication  query record from mysql
  */
 func QueryApplication(request *http.Request) (string, interface{}) {
-	var app_name string = request.FormValue("app_name")
-	app := &application.App{}
-	engine := mysqld.GetEngine()
-	_,err := engine.Id(app_name).Get(app)
-	if err != nil{
-		log.Errorf("is not exist app err:%v",err)
-		return r.StatusBadRequest,"is not exist application"
+	app_name := request.FormValue("app_name")
+	if app_name == "" || len(app_name) == 0 {
+		return r.StatusBadRequest,"app_name is unavailable !"
 	}
-	log.Info("app:",app)
-	return r.StatusOK,app
+	limit, err := strconv.Atoi(request.FormValue("limit"))
+	if err != nil{
+		log.Error("error in QueryApplication,limit is unavailable")
+		return r.StatusBadRequest,err
+	}
+	start, err := strconv.Atoi(request.FormValue("start"))
+	if err != nil{
+		log.Error("error in QueryApplication,start is unavailable")
+		return r.StatusBadRequest,err
+	}
+
+	apps := &[]application.App{}
+	page_err := application.Pagelation(apps,app_name,limit,start)
+	if page_err != nil {
+		log.Error("It's not exist app in mysql database!")
+		return r.StatusNotFound,page_err
+	}
+	log.Info("apps:",apps)
+	return r.StatusOK,apps
 }
 
 /**

@@ -158,3 +158,16 @@ func (app *App) QuerySet() ([]*App, error) {
 	}
 	return appSet, nil
 }
+
+/**
+	select * from table limit (start-1)*limit,limit; 其中start是页码，limit是每页显示的条数
+ 	查询第20条到第30条的数据的sql是：select * from table limit 20,30;
+ 	->对应我们的需求就是查询第三页的数据：select * from table limit (3-1)*10,10;
+ */
+func Pagelation(apps *[]App,name string,limit int,start int) error {
+	err := engine.Where("name=?",name).Limit(limit, start).Find(&apps)
+	if err != nil{
+		return err
+	}
+	return nil
+}
