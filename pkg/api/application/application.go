@@ -20,6 +20,7 @@ import (
 	"apiserver/pkg/storage/mysqld"
 	"apiserver/pkg/util/jsonx"
 	"apiserver/pkg/util/log"
+	"fmt"
 )
 
 type AppStatus int32
@@ -164,10 +165,53 @@ func (app *App) QuerySet() ([]*App, error) {
  	查询第20条到第30条的数据的sql是：select * from table limit 20,30;
  	->对应我们的需求就是查询第三页的数据：select * from table limit (3-1)*10,10;
  */
-func Pagelation(apps *[]App,name string,limit int,start int) error {
-	err := engine.Where("name=?",name).Limit(limit, start).Find(&apps)
-	if err != nil{
-		return err
+func Pagelation(where map[string]interface{},limit,start int) ([]App,error) {
+	//err := engine.Where("name=?",name).Limit(limit, start).Find(&apps)
+	apps := make([]App,0)
+	sql := "1 AND "
+	if len(where) > 0 {
+		if where["name"] != "" {
+			sql += "name = " + fmt.Sprintf("%v",where["name"]) + " AND "
+		}
+		if  where["region"] != ""{
+			sql += "region = " + fmt.Sprintf("%v",where["region"]) + " AND "
+		}
+		if where["memory"] != "" {
+			sql += "memory = " + fmt.Sprintf("%v",where["memory"]) + " AND "
+		}
+		if where["cpu"] != "" {
+			sql += "cpu = " + fmt.Sprintf("%v",where["cpu"]) + " AND "
+		}
+		if where["instance_count"] != "" {
+			sql += "instance_count = " + fmt.Sprintf("%v",where["instance_count"]) + " AND "
+		}
+		if where["envs"] != "" {
+			sql += "envs = " + fmt.Sprintf("%v",where["envs"]) + " AND "
+		}
+		if where["ports"] != "" {
+			sql += "ports = " + fmt.Sprintf("%v",where["ports"]) + " AND "
+		}
+		if where["image"] != "" {
+			sql += "image = " + fmt.Sprintf("%v",where["image"]) + " AND "
+		}
+		if where["command"] != "" {
+			sql += "command = " + fmt.Sprintf("%v",where["command"]) + " AND "
+		}
+		if where["status"] != "" {
+			sql += "status = " + fmt.Sprintf("%v",where["status"]) + " AND "
+		}
+		if where["user_name"] != "" {
+			sql += "user_name = " + fmt.Sprintf("%v",where["user_name"]) + " AND "
+		}
+		if where["remark"] != "" {
+			sql += "remark = " + fmt.Sprintf("%v",where["remark"]) + " AND "
+		}
 	}
-	return nil
+
+	sql += " 1 "
+	err := engine.Where(sql).Limit(limit,start).Desc("name").Find(&apps)
+	if err != nil {
+		return nil,err
+	}
+	return apps,nil
 }

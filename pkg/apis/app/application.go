@@ -46,10 +46,54 @@ func Register(rout *mux.Router) {
 /**
 	QueryApplication  query record from mysql
  */
-func QueryApplication(request *http.Request) (string, interface{}) {
-	app_name := request.FormValue("app_name")
-	if app_name == "" || len(app_name) == 0 {
-		return r.StatusBadRequest,"app_name is unavailable !"
+func QueryApplication(request *http.Request) (string,interface{}) {
+	name := request.FormValue("name")
+	if name == "" || len(name) == 0 {
+		return r.StatusBadRequest,"name is unavailable !"
+	}
+	region := request.FormValue("region")
+	if region == "" || len(region) == 0 {
+		return r.StatusBadRequest,"region is unavailable !"
+	}
+	memory := request.FormValue("memory")
+	if memory == "" || len(memory) == 0 {
+		return r.StatusBadRequest,"memory is unavailable !"
+	}
+	cpu := request.FormValue("cpu")
+	if cpu == "" || len(cpu) == 0 {
+		return r.StatusBadRequest,"cpu is unavailable !"
+	}
+	instance_count := request.FormValue("instance_count")
+	if instance_count == "" || len(instance_count) == 0 {
+		return r.StatusBadRequest,"instance_count is unavailable !"
+	}
+	envs := request.FormValue("envs")
+	if envs == "" || len(envs) == 0 {
+		return r.StatusBadRequest,"envs is unavailable !"
+	}
+	ports := request.FormValue("ports")
+	if ports == "" || len(ports) == 0 {
+		return r.StatusBadRequest,"ports is unavailable !"
+	}
+	image := request.FormValue("image")
+	if image == "" || len(image) == 0 {
+		return r.StatusBadRequest,"image is unavailable !"
+	}
+	command := request.FormValue("command")
+	if command == "" || len(command) == 0 {
+		return r.StatusBadRequest,"command is unavailable !"
+	}
+	status := request.FormValue("status")
+	if status == "" || len(status) == 0 {
+		return r.StatusBadRequest,"status is unavailable !"
+	}
+	user_name := request.FormValue("user_name")
+	if user_name == "" || len(user_name) == 0 {
+		return r.StatusBadRequest,"user_name is unavailable !"
+	}
+	remark := request.FormValue("remark")
+	if remark == "" || len(remark) == 0 {
+		return r.StatusBadRequest,"remark is unavailable !"
 	}
 	limit, err := strconv.Atoi(request.FormValue("limit"))
 	if err != nil{
@@ -62,11 +106,27 @@ func QueryApplication(request *http.Request) (string, interface{}) {
 		return r.StatusBadRequest,err
 	}
 
-	apps := &[]application.App{}
-	page_err := application.Pagelation(apps,app_name,limit,start)
-	if page_err != nil {
+	apps := []application.App{}
+	
+	req_map := map[string]interface{}{
+		"name":name,
+		"region":region,
+		"memory":memory,
+		"cpu":cpu,
+		"instance_count":instance_count,
+		"envs":envs,
+		"ports":ports,
+		"image":image,
+		"command":command,
+		"status":status,
+		"user_name":user_name,
+		"remark":remark,
+	}
+
+	apps,err = application.Pagelation(req_map, limit, start)
+	if err != nil {
 		log.Error("It's not exist app in mysql database!")
-		return r.StatusNotFound,page_err
+		return r.StatusNotFound,err
 	}
 	log.Info("apps:",apps)
 	return r.StatusOK,apps
