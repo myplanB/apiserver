@@ -18,16 +18,16 @@ type rpcEncodeTerminator interface {
 	rpcEncodeTerminate() []byte
 }
 
-// Rpc provides a rpc Server or Client Codec for rpc communication.
+// Rpc provides a ipc Server or Client Codec for ipc communication.
 type Rpc interface {
 	ServerCodec(conn io.ReadWriteCloser, h Handle) rpc.ServerCodec
 	ClientCodec(conn io.ReadWriteCloser, h Handle) rpc.ClientCodec
 }
 
 // RpcCodecBuffered allows access to the underlying bufio.Reader/Writer
-// used by the rpc connection. It accommodates use-cases where the connection
-// should be used by rpc and non-rpc functions, e.g. streaming a file after
-// sending an rpc response.
+// used by the ipc connection. It accommodates use-cases where the connection
+// should be used by ipc and non-ipc functions, e.g. streaming a file after
+// sending an ipc response.
 type RpcCodecBuffered interface {
 	BufferedReader() *bufio.Reader
 	BufferedWriter() *bufio.Writer
@@ -162,10 +162,10 @@ func (c *goRpcCodec) ReadRequestBody(body interface{}) error {
 // -------------------------------------
 
 // goRpc is the implementation of Rpc that uses the communication protocol
-// as defined in net/rpc package.
+// as defined in net/ipc package.
 type goRpc struct{}
 
-// GoRpc implements Rpc using the communication protocol defined in net/rpc package.
+// GoRpc implements Rpc using the communication protocol defined in net/ipc package.
 // Its methods (ServerCodec and ClientCodec) return values that implement RpcCodecBuffered.
 var GoRpc goRpc
 

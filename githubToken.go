@@ -1,4 +1,4 @@
-package apiserver
+package main
 
 import (
     "fmt"
@@ -32,20 +32,20 @@ Logged in with <a href="/login">GitHub</a>
 </body></html>
 `
 
-// /
+//main
 func handleMain(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "text/html; charset=utf-8")
     w.WriteHeader(http.StatusOK)
     w.Write([]byte(htmlIndex))
 }
 
-// /login
+//login
 func handleGitHubLogin(w http.ResponseWriter, r *http.Request) {
     url := oauthConf.AuthCodeURL(oauthStateString, oauth2.AccessTypeOnline)
     http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
-// /github_oauth_cb. Called by github after authorization is granted
+//github_oauth_cb. Called by github after authorization is granted
 func handleGitHubCallback(w http.ResponseWriter, r *http.Request) {
     state := r.FormValue("state")
     if state != oauthStateString {

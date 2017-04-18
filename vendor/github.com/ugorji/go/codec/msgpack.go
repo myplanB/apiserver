@@ -82,7 +82,7 @@ const (
 // that the backend RPC service takes multiple arguments, which have been arranged
 // in sequence in the slice.
 //
-// The Codec then passes it AS-IS to the rpc service (without wrapping it in an
+// The Codec then passes it AS-IS to the ipc service (without wrapping it in an
 // array of 1 element).
 type MsgpackSpecRpcMultiArgs []interface{}
 

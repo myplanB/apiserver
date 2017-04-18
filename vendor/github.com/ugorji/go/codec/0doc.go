@@ -67,11 +67,11 @@ Rich Feature Set includes:
   - Detect and error when encoding a cyclic reference (instead of stack overflow shutdown)
   - Encode/Decode from/to chan types (for iterative streaming support)
   - Drop-in replacement for encoding/json. `json:` key in struct tag supported.
-  - Provides a RPC Server and Client Codec for net/rpc communication protocol.
+  - Provides a RPC Server and Client Codec for net/ipc communication protocol.
   - Handle unique idiosyncrasies of codecs e.g. 
     - For messagepack, configure how ambiguities in handling raw bytes are resolved 
-    - For messagepack, provide rpc server/client codec to support 
-      msgpack-rpc protocol defined at:
+    - For messagepack, provide ipc server/client codec to support
+      msgpack-ipc protocol defined at:
       https://github.com/msgpack-rpc/msgpack-rpc/blob/master/spec.md
   
 Extension Support
@@ -95,7 +95,7 @@ encode any of these however you like.
 RPC
 
 RPC Client and Server Codecs are implemented, so the codecs can be used
-with the standard net/rpc package.
+with the standard net/ipc package.
 
 Usage
 
@@ -150,7 +150,7 @@ Sample usage model:
             conn, err := listener.Accept()
             rpcCodec := codec.GoRpc.ServerCodec(conn, h)
             //OR rpcCodec := codec.MsgpackSpecRpc.ServerCodec(conn, h)
-            rpc.ServeCodec(rpcCodec)
+            ipc.ServeCodec(rpcCodec)
         }
     }()
 
@@ -158,7 +158,7 @@ Sample usage model:
     conn, err = net.Dial("tcp", "localhost:5555")
     rpcCodec := codec.GoRpc.ClientCodec(conn, h)
     //OR rpcCodec := codec.MsgpackSpecRpc.ClientCodec(conn, h)
-    client := rpc.NewClientWithCodec(rpcCodec)
+    client := ipc.NewClientWithCodec(rpcCodec)
 
 */
 package codec

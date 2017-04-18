@@ -130,7 +130,7 @@ const (
 	useMapForCodecCache = false
 
 	// for debugging, set this to false, to catch panic traces.
-	// Note that this will always cause rpc tests to fail, since they need io.EOF sent via panic.
+	// Note that this will always cause ipc tests to fail, since they need io.EOF sent via panic.
 	recoverPanicToErr = true
 
 	// if resetSliceElemToZeroValue, then on decoding a slice, reset the element to a zero value first.

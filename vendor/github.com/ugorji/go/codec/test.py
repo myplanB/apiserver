@@ -7,7 +7,7 @@
 # Ensure msgpack-python and cbor are installed first, using:
 #   sudo apt-get install python-dev
 #   sudo apt-get install python-pip
-#   pip install --user msgpack-python msgpack-rpc-python cbor
+#   pip install --user msgpack-python msgpack-ipc-python cbor
 
 # Ensure all "string" keys are utf strings (else encoded as bytes)
 
@@ -111,15 +111,15 @@ def doRpcClientToGoSvc(port):
 def doMain(args):
     if len(args) == 2 and args[0] == "testdata":
         build_test_data(args[1])
-    elif len(args) == 3 and args[0] == "rpc-server":
+    elif len(args) == 3 and args[0] == "ipc-server":
         doRpcServer(int(args[1]), int(args[2]))
-    elif len(args) == 2 and args[0] == "rpc-client-python-service":
+    elif len(args) == 2 and args[0] == "ipc-client-python-service":
         doRpcClientToPythonSvc(int(args[1]))
-    elif len(args) == 2 and args[0] == "rpc-client-go-service":
+    elif len(args) == 2 and args[0] == "ipc-client-go-service":
         doRpcClientToGoSvc(int(args[1]))
     else:
         print("Usage: test.py " + 
-              "[testdata|rpc-server|rpc-client-python-service|rpc-client-go-service] ...")
+              "[testdata|ipc-server|ipc-client-python-service|ipc-client-go-service] ...")
     
 if __name__ == "__main__":
     doMain(sys.argv[1:])

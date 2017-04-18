@@ -26,7 +26,7 @@ package codec
 //
 // Note:
 //   - encode does not beautify. There is no whitespace when encoding.
-//   - rpc calls which take single integer arguments or write single numeric arguments will need care.
+//   - ipc calls which take single integer arguments or write single numeric arguments will need care.
 
 // Top-level methods of json(End|Dec)Driver (which are implementations of (en|de)cDriver
 // MUST not call one-another.
