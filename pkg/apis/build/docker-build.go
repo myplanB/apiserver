@@ -30,24 +30,13 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/api/types/container"
 	//"github.com/google/go-github/github"
-    	"golang.org/x/oauth2"
-    	githuboauth "golang.org/x/oauth2/github"
+    	//"golang.org/x/oauth2"
+    	//githuboauth "golang.org/x/oauth2/github"
 	"fmt"
 )
 
 var (
 	engine = mysqld.GetEngine()
-	oauthConf = &oauth2.Config{
-		ClientID:     "17f03800ee9e0b7caf95",
-		ClientSecret: "542dd6ffef2da3ac66ed493e82fba8fd0de089ba",
-		//ClientID:     "",
-		//ClientSecret: "",
-		// select level of access you want https://developer.github.com/v3/oauth/#scopes
-		Scopes:       []string{"user:email", "repo"},
-		Endpoint:     githuboauth.Endpoint,
-    }
-    // random string for oauth2 API calls to protect against CSRF
-    oauthStateString = "thisshouldberandom"
 )
 
 const(
